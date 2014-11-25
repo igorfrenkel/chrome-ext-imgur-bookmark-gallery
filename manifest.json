@@ -1,15 +1,19 @@
 {
-  "name": "My Devices",
+  "name": "Show Imgur Gallery",
   "version": "1.1",
-  "description": "A browser action with a popup dump of all devices signed into the same account as the current profile.",
+  "description": "Show imgur links as images in gallery",
   "permissions": [
-     "signedInDevices"
+     "bookmarks"
   ],
   "browser_action": {
-      "default_title": "My Devices",
-      "default_icon": "icon.png",
+      "default_title": "Show Imgur Gallery",
+      "default_icon": "icon16x16.png",
       "default_popup": "popup.html"
   },
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
+  "icons": {
+    "16": "icon16x16.png",
+    "48": "icon48x48.png",
+    "128": "icon128x128.png"
+  },
+  "manifest_version": 2
 }

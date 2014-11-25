@@ -1,42 +1,40 @@
-// Copyright 2013 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+var _idMatcher = /[^\/]+/g;
+var _gallery;
+var _thumbUrl = function(url) {
+  var id = url.match(_idMatcher).pop(),
+    thumbUrl = "http://imgur.com/" + id + ".jpg";
+  return thumbUrl;
+};
 
-function dumpDevices(devices) {
-    $('#deviceinfos').empty();
-    $('#deviceinfos').append(outputDevicesToList(devices));
-}
+var gallery = function() {
+  _gallery = _gallery || document.getElementById("gallery");
+  return _gallery;
+};
 
-function outputDevicesToList(devices) {
-    var table = $('<table border="1">');
-    table.append($("<tr>" +
-                   "<th>" + "Name" + "</th>" +
-                   "<th>" + "OS" + "</th>" +
-                   "<th>" + "Id" + "</th>" +
-                   "<th>" + "Type" + "</th>" +
-                   "<th>" + "Chrome Version" + "</th>" +
-                   "</tr>"));
-    for (i = 0; i < devices.length; i++) {
-        table.append($("<tr>" +
-                       "<td>" + devices[i].name + "</td>" +
-                       "<td>" + devices[i].os + "</td>" +
-                       "<td>" + devices[i].id + "</td>" +
-                       "<td>" + devices[i].type + "</td>" +
-                       "<td>" + devices[i].chromeVersion + "</td>" +
-                       "</tr>"));
-    }
-    return table;
-}
+var addUrlToPopup = function(imgUrl, thumbUrl) {
+  var link = document.createElement("a"),
+    thumb = document.createElement("img");
+  link.href = imgUrl;
+  link.target = "_blank";
+  thumb.src = thumbUrl;
+  link.appendChild(thumb);
+  gallery().appendChild(link);
+};
 
-// Add an event listener to listen for changes to device info. The
-// callback would redisplay the list of devices.
-chrome.signedInDevices.onDeviceInfoChange.addListener(dumpDevices);
-
-function populateDevices() {
-  // Get the list of devices and display it.
-  chrome.signedInDevices.get(false, dumpDevices);
-}
+var drawGalleryFrom = function(urls) {
+  urls.forEach(function(imgUrl) {
+    var thumbUrl = _thumbUrl(imgUrl);
+    addUrlToPopup(imgUrl, thumbUrl);
+  });
+};
 
 document.addEventListener('DOMContentLoaded', function () {
-    populateDevices();
+  var urls = [];
+  chrome.bookmarks.search("http://imgur.com/", function(results) { 
+    results.forEach(function(result) { 
+      if (result.url)
+        urls.push(result.url);
+    });
+    drawGalleryFrom(urls);
+  });  
 });
